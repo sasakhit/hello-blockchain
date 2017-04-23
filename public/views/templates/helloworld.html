@@ -1,0 +1,45 @@
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="alt-table-responsive">
+      <h3>Hellow World</h3>
+
+      <label>Chaincode ID:</label>
+      <div class="form-group">
+        <input class="form-control" type="text" ng-model="chaincodeID">
+      </div>
+
+      <label>Invoke:</label>
+      <div class="form-inline">
+        Owner (From): <input class="form-control" type="text" ng-model="fromOwner">
+        Owner (To): <input class="form-control" type="text" ng-model="toOwner">
+        Quantity: <input class="form-control" type="text" ng-model="moveQuantity">
+      </div>
+
+      <label>Query:</label>
+      <div class="form-inline">
+        Owner: <input class="form-control" type="text" ng-model="owner">
+      </div>
+
+      <button class="btn btn-danger" ng-click="deploy()">Deploy</button>
+      <button class="btn btn-primary" ng-click="invoke(fromOwner, toOwner, moveQuantity)">Invoke</button>
+      <button class="btn btn-warning" ng-click="query(owner)">Query</button>
+
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Quantity</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{owner}}</td>
+            <td>{{quantity}}</td>
+            <td>{{comment}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
