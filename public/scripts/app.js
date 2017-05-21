@@ -8,6 +8,14 @@ myApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/views/templates/helloworld.html',
       controller: 'helloworldController'
     })
+    .when('/counter', {
+      templateUrl: '/views/templates/counter.html',
+      controller: 'counterController'
+    })
+    .when('/fx', {
+      templateUrl: '/views/templates/fx.html',
+      controller: 'fxController'
+    })
     .when('/notImplemented', {
       templateUrl: '/views/templates/notImplemented.html'
     })

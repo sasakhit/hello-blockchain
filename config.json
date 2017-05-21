@@ -2,11 +2,11 @@
    "chainName":"hello-world",
    "deployWaitTime":"240",
    "user": {
-	"username": "JohnDoe",
-        "affiliation" : "group1"
+      "username": "test_user",
+      "affiliation" : "group1"
    },
    "deployRequest":{
-      "chaincodePath":"chaincode",
+      "chaincodePath":"chaincode_fx",
       "functionName":"init",
       "args":[
          "a",

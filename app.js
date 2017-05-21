@@ -9,7 +9,10 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 // Route includes
+var login = require('./routes/login');
 var helloworld = require('./routes/helloworld');
+var counter = require('./routes/counter');
+var fx = require('./routes/fx');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -24,7 +27,10 @@ app.use(session({
     cookie: {maxage: 60000, secure: false}
 }));
 
+app.use('/login', login);
 app.use('/helloworld', helloworld);
+app.use('/counter', counter);
+app.use('/fx', fx);
 
 // Serve back static files
 app.use(express.static('public'));
@@ -53,8 +59,9 @@ try {
     process.exit();
 }
 
-// Create a client blockchin.
-var chain = hfc.newChain(config.chainName);
+// Create a client blockchain.
+//var chain = hfc.newChain(config.chainName);
+var chain = hfc.newChain('counter');
 var certPath = __dirname+"/src/"+config.deployRequest.chaincodePath+"/certificate.pem";
 
 // Read and process the credentials.json
@@ -117,7 +124,7 @@ function enrollAndRegisterUsers() {
 
     // Enroll a 'admin' who is already registered because it is
     // listed in fabric/membersrvc/membersrvc.yaml with it's one time password.
-    chain.enroll(users[0].enrollId, users[0].enrollSecret, function (err, admin) {
+    chain.enroll(users[1].enrollId, users[1].enrollSecret, function (err, admin) {
         if (err) throw Error("\nERROR: failed to enroll admin : " + err);
 
         console.log("\nEnrolled admin sucecssfully");
@@ -139,7 +146,48 @@ function enrollAndRegisterUsers() {
             chain.setDeployWaitTime(config.deployWaitTime);
             app.set('user', user);
             console.log("\nUser : " + user);
+            app.set('chain', chain);
+
+            // Note: Uncomment the following deployment, when deploying the chaincode
+            //console.log("\nDeploying chaincode ...");
+            //deployChaincode(user);
         });
+    });
+}
+
+function deployChaincode(user) {
+    //var args = getArgs(config.deployRequest);
+    var args = [];
+    // Construct the deploy request
+    var deployRequest = {
+        // Function to trigger
+        fcn: config.deployRequest.functionName,
+        // Arguments to the initializing function
+        args: args,
+        // Note: Need to change chaincodePath in config.json
+        chaincodePath: config.deployRequest.chaincodePath,
+        // the location where the startup and HSBN store the certificates
+        certificatePath: network.cert_path
+    };
+
+    // Trigger the deploy transaction
+    var deployTx = user.deploy(deployRequest);
+
+    // Print the deploy results
+    deployTx.on('complete', function(results) {
+        // Deploy request completed successfully
+        chaincodeID = results.chaincodeID;
+        console.log("\nChaincode ID : " + chaincodeID);
+        console.log(util.format("\nSuccessfully deployed chaincode: request=%j, response=%j", deployRequest, results));
+        // Save the chaincodeID
+        //fs.writeFileSync(chaincodeIDPath, chaincodeID);
+        //invoke();
+    });
+
+    deployTx.on('error', function(err) {
+        // Deploy request failed
+        console.log(util.format("\nFailed to deploy chaincode: request=%j, error=%j", deployRequest, err));
+        process.exit(1);
     });
 }
 

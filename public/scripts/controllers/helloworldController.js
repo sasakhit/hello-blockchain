@@ -8,7 +8,6 @@ myApp.controller('helloworldController',
       $scope.comment = 'Deploying chaincode ...';
       DataService.deployHelloworld().then(function(data) {
         $scope.chaincodeID = data;
-        $scope.comment = data;
         alert('chaincodeID:' + data);
       });
     }

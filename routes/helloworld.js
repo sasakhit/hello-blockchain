@@ -158,6 +158,8 @@ function queryUser(user, owner, chaincodeID) {
     var queryTx = user.query(queryRequest);
     var value;
 
+    console.log("queryRequest: " + queryRequest);
+
     // Print the query results
     queryTx.on('complete', function (results) {
         // Query completed successfully
