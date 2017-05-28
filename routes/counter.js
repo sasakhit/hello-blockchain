@@ -1,28 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var fs = require('fs');
-var user;
-
-var config;
-try {
-    config = JSON.parse(fs.readFileSync(__dirname + '/../config.json', 'utf8'));
-} catch (err) {
-    console.log("config.json is missing or invalid file, Rerun the program with right file");
-    process.exit();
-}
-
-// Read and process the credentials.json
-var network;
-try {
-    network = JSON.parse(fs.readFileSync(__dirname + '/../ServiceCredentials.json', 'utf8'));
-    if (network.credentials) network = network.credentials;
-} catch (err) {
-    console.log("ServiceCredentials.json is missing or invalid file, Rerun the program with right file")
-    process.exit();
-}
+var util = require('./util');
+var chaincodeName = "counter"
+var ccConfig = util.setCcConfig(chaincodeName);
+var network = util.setCredentials();
 
 router.get('/deploy', function(req, res) {
-  var user = req.app.get('user');
+  var user = req.app.get('loginUser');
 
   deployChaincode(user)
     .then(function(data) {
@@ -34,7 +18,6 @@ router.get('/deploy', function(req, res) {
 });
 
 router.get('/query', function(req, res) {
-  var chain = req.app.get('chain');
   var user = req.app.get('loginUser');
   var chaincodeID = req.query.chaincodeID;
 
@@ -58,6 +41,10 @@ router.post('/invoke', function(req, res) {
   var counterId = req.body.counterId;
   var chaincodeID = req.body.chaincodeID;
 
+  if (! user) return res.status(500).json('No login user');
+  if (! chaincodeID) return res.status(500).json('No chaincode ID');
+  if (! counterId) return res.status(500).json('No Counter ID');
+
   invokeOnUser(user, counterId, chaincodeID)
     .then(function(data) {
       return res.json(data);
@@ -71,14 +58,14 @@ function deployChaincode(user) {
   return new Promise(function (resolve, reject) {
     console.log("\nDeploying chaincode ...");
 
-    var args = [];
+    var args = getArgs(ccConfig.deployRequest);
     // Construct the deploy request
     var deployRequest = {
         // Function to trigger
-        fcn: init,
+        fcn: ccConfig.deployRequest.functionName,
         // Arguments to the initializing function
         args: args,
-	      chaincodePath : config.deployRequest.chaincodePath + '\\counter',
+	      chaincodePath : ccConfig.deployRequest.chaincodePath,
         // the location where the startup and HSBN store the certificates
         certificatePath: network.cert_path
     };

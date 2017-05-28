@@ -12,7 +12,11 @@ myApp.factory('DataService',
         invokeCounter : invokeCounter,
         deployFx : deployFx,
         queryFx : queryFx,
-        invokeFx : invokeFx
+        invokeFx : invokeFx,
+        deploySl : deploySl,
+        querySl : querySl,
+        invokeSl : invokeSl,
+        invokeSlMarginCall : invokeSlMarginCall
       };
 
       function login(username, password) {
@@ -77,6 +81,42 @@ myApp.factory('DataService',
         return $http.post('/fx/invoke', {fromAccount: fromAccount, fromCcy: fromCcy, fromAmt: fromAmt, toAccount: toAccount, toCcy: toCcy, toAmt: toAmt, chaincodeID: chaincodeID}).then(function(response) {
           return response.data;
         });
+      }
+
+      function deploySl() {
+        return $http.get('/sl/deploy', {timeout: 10000}).then(function(response) {
+          return response.data;
+        });
+      }
+
+      function querySl(chaincodeID) {
+        return $http.get('/sl/query', {params: {chaincodeID: chaincodeID}})
+          .then(function(response) {
+            return response.data;
+          })
+          .catch(function(error) {
+            throw error.data;
+          });
+      }
+
+      function invokeSl(brInd, borrower, lender, secCode, qty, ccy, amt, chaincodeID) {
+        return $http.post('/sl/invoke', {brInd: brInd, borrower: borrower, lender: lender, secCode: secCode, qty: qty, ccy: ccy, amt: amt, chaincodeID: chaincodeID})
+          .then(function(response) {
+            return response.data;
+          })
+          .catch(function(error) {
+            throw error.data;
+          });
+      }
+
+      function invokeSlMarginCall(chaincodeID) {
+        return $http.post('/sl/invoke/marginCall', {chaincodeID: chaincodeID})
+          .then(function(response) {
+            return response.data;
+          })
+          .catch(function(error) {
+            throw error.data;
+          });
       }
 
     }

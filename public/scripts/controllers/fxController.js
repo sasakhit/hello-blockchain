@@ -34,10 +34,6 @@ myApp.controller('fxController',
         .then(function(data) {
           $scope.accounts = data;
           $scope.comment = '';
-          $scope.selectedItem = 0;
-          $scope.changeItem = function(index) {
-            $scope.selectedItem = index;
-          };
         })
         .catch(function(error) {
           $scope.comment = error;

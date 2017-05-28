@@ -1,0 +1,61 @@
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="alt-table-responsive">
+      <h3>Stock Loan</h3>
+
+      <label>Chaincode ID:</label>
+      <div class="form-group">
+        <input class="form-control" type="text" ng-model="chaincodeID">
+      </div>
+
+      <button class="btn btn-primary" ng-click="login()">Login</button>
+      <div class="form-inline">
+        User Name: <input class="form-control" type="text" ng-model="username">
+        Password: <input class="form-control" type="text" ng-model="password">
+      </div>
+      <br>
+
+      <button class="btn btn-primary" ng-click="invoke(brInd, borrower, lender, secCode, qty, ccy, amt)">Trade SL</button>
+      <br>
+      <div class="form-inline">
+        <input type="radio" ng-model="brInd" value="B">Borrow
+        <input type="radio" ng-model="brInd" value="R">Return
+      </div>
+      <div class="form-inline">
+        Borrower: <input class="form-control" type="text" ng-model="borrower">
+        Lender: <input class="form-control" type="text" ng-model="lender">
+      </div>
+      <div class="form-inline">
+        SecCode: <input class="form-control" type="text" ng-model="secCode">
+        Qty: <input class="form-control" type="number" ng-model="qty">
+        Ccy: <input class="form-control" type="text" ng-model="ccy">
+        Amt: <input class="form-control" type="number" ng-model="amt">
+      </div>
+      <br>
+
+      <!-- button class="btn btn-danger" ng-click="deploy()">Deploy</button -->
+      <button class="btn btn-warning" ng-click="query()">Get Outstandings</button>
+      <button class="btn btn-primary" ng-click="marginCall()">Margin Call</button>
+      {{comment}}
+
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Borrower</th>
+            <th>Lender</th>
+            <th>SecCode/Ccy</th>
+            <th>Qty/Amt</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat="outstanding in outstandings">
+          <tr>
+            <td>{{outstanding.borrower}}</td>
+            <td>{{outstanding.lender}}</td>
+            <td>{{outstanding.secCode}}</td>
+            <td>{{outstanding.qty}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

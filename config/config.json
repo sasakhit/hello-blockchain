@@ -1,0 +1,8 @@
+{
+  "chainName":"hello-world",
+  "deployWaitTime":"240",
+  "user": {
+     "username": "test_user",
+     "affiliation" : "group1"
+  }
+}

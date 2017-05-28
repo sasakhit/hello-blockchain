@@ -16,6 +16,10 @@ myApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: '/views/templates/fx.html',
       controller: 'fxController'
     })
+    .when('/sl', {
+      templateUrl: '/views/templates/sl.html',
+      controller: 'slController'
+    })
     .when('/notImplemented', {
       templateUrl: '/views/templates/notImplemented.html'
     })

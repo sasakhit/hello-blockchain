@@ -13,6 +13,7 @@ var login = require('./routes/login');
 var helloworld = require('./routes/helloworld');
 var counter = require('./routes/counter');
 var fx = require('./routes/fx');
+var sl = require('./routes/sl');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -31,6 +32,7 @@ app.use('/login', login);
 app.use('/helloworld', helloworld);
 app.use('/counter', counter);
 app.use('/fx', fx);
+app.use('/sl', sl);
 
 // Serve back static files
 app.use(express.static('public'));
@@ -49,20 +51,29 @@ var hfc = require('hfc');
 var util = require('util');
 var fs = require('fs');
 const https = require('https');
+
 var config;
 try {
-    config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
-    //app.set('config', config);
-    module.exports.config = config;
+    config = JSON.parse(fs.readFileSync(__dirname + '/config/config.json', 'utf8'));
+    //module.exports.config = config;
 } catch (err) {
     console.log("config.json is missing or invalid file, Rerun the program with right file")
     process.exit();
 }
 
+var ccConfig;
+var chaincodeName = "sl" //helloworld, counter, fx, sl
+try {
+    ccConfig = JSON.parse(fs.readFileSync(__dirname + '/config/'+ chaincodeName + '.json', 'utf8'));
+    //module.exports.ccConfig = ccConfig;
+} catch (err) {
+    console.log(chaincodeName + ".json is missing or invalid file, Rerun the program with right file")
+    process.exit();
+}
+
 // Create a client blockchain.
-//var chain = hfc.newChain(config.chainName);
-var chain = hfc.newChain('counter');
-var certPath = __dirname+"/src/"+config.deployRequest.chaincodePath+"/certificate.pem";
+var chain = hfc.newChain(config.chainName);
+var certPath = __dirname + "/src/" + ccConfig.deployRequest.chaincodePath + "/certificate.pem";
 
 // Read and process the credentials.json
 var network;
@@ -137,6 +148,8 @@ function enrollAndRegisterUsers() {
             enrollmentID: enrollName,
             affiliation: config.user.affiliation
         };
+
+        /*
         chain.registerAndEnroll(registrationRequest, function (err, user) {
             if (err) throw Error(" Failed to register and enroll " + enrollName + ": " + err);
 
@@ -149,23 +162,30 @@ function enrollAndRegisterUsers() {
             app.set('chain', chain);
 
             // Note: Uncomment the following deployment, when deploying the chaincode
-            //console.log("\nDeploying chaincode ...");
-            //deployChaincode(user);
+            console.log("\nDeploying chaincode ...");
+            deployChaincode(user);
         });
+        */
+
+        //setting timers for fabric waits
+        chain.setDeployWaitTime(config.deployWaitTime);
+        app.set('chain', chain);
+
+        // Note: Uncomment the following deployment, when deploying the chaincode
+        //console.log("\nDeploying chaincode ...");
+        //deployChaincode(admin);
     });
 }
 
 function deployChaincode(user) {
-    //var args = getArgs(config.deployRequest);
-    var args = [];
+    var args = getArgs(ccConfig.deployRequest);
     // Construct the deploy request
     var deployRequest = {
         // Function to trigger
-        fcn: config.deployRequest.functionName,
+        fcn: ccConfig.deployRequest.functionName,
         // Arguments to the initializing function
         args: args,
-        // Note: Need to change chaincodePath in config.json
-        chaincodePath: config.deployRequest.chaincodePath,
+        chaincodePath: ccConfig.deployRequest.chaincodePath,
         // the location where the startup and HSBN store the certificates
         certificatePath: network.cert_path
     };

@@ -4,7 +4,7 @@ myApp.controller('counterController',
 
     var user;
 
-    $scope.chaincodeID = '0afe2306335e38c2612218db73862aca2eaa5eaa25d08832bb6f92006edd1b6c';
+    $scope.chaincodeID = '605e5427e34c0167242c1c98127cc1f936818e7cbd9756bbb94864fec1c166c4';
     $scope.username = 'user_type1_0';
     $scope.password = '53a2377961';
 
@@ -40,9 +40,14 @@ myApp.controller('counterController',
 
     $scope.invoke = function(counterId) {
       $scope.comment = 'Invoking ...';
-      DataService.invokeCounter(counterId.toString(), $scope.chaincodeID).then(function(data) {
-        $scope.comment = data;
-      });
+      if (!counterId) $scope.comment = "No Counter ID";
+      DataService.invokeCounter(counterId.toString(), $scope.chaincodeID)
+        .then(function(data) {
+          $scope.comment = data;
+        })
+        .catch(function(error) {
+          $scope.comment = error;
+        });
     }
 
   }
