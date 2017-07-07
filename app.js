@@ -2,7 +2,6 @@ process.env.GOPATH = __dirname
 
 // Web
 var express = require('express');
-//var app = module.exports = express();
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -133,48 +132,19 @@ function enrollAndRegisterUsers() {
     console.log(chain.getMemberServices());
     console.log('-----------------------------------------------------------\n\n');
 
-    // Enroll a 'admin' who is already registered because it is
-    // listed in fabric/membersrvc/membersrvc.yaml with it's one time password.
+    //setting timers for fabric waits
+    chain.setDeployWaitTime(config.deployWaitTime);
+    app.set('chain', chain);
+
+    // Note: Uncomment the following deployment, when deploying the chaincode
+
     chain.enroll(users[1].enrollId, users[1].enrollSecret, function (err, admin) {
-        if (err) throw Error("\nERROR: failed to enroll admin : " + err);
-
-        console.log("\nEnrolled admin sucecssfully");
-
-        // Set this user as the chain's registrar which is authorized to register other users.
-        chain.setRegistrar(admin);
-
-        var enrollName = config.user.username; //creating a new user
-        var registrationRequest = {
-            enrollmentID: enrollName,
-            affiliation: config.user.affiliation
-        };
-
-        /*
-        chain.registerAndEnroll(registrationRequest, function (err, user) {
-            if (err) throw Error(" Failed to register and enroll " + enrollName + ": " + err);
-
-            console.log("\nEnrolled and registered " + enrollName + " successfully");
-
-            //setting timers for fabric waits
-            chain.setDeployWaitTime(config.deployWaitTime);
-            app.set('user', user);
-            console.log("\nUser : " + user);
-            app.set('chain', chain);
-
-            // Note: Uncomment the following deployment, when deploying the chaincode
-            console.log("\nDeploying chaincode ...");
-            deployChaincode(user);
-        });
-        */
-
-        //setting timers for fabric waits
-        chain.setDeployWaitTime(config.deployWaitTime);
-        app.set('chain', chain);
-
-        // Note: Uncomment the following deployment, when deploying the chaincode
-        //console.log("\nDeploying chaincode ...");
-        //deployChaincode(admin);
+      if (err) throw Error("\nERROR: failed to enroll admin : " + err);
+      console.log("\nDeploying chaincode ...");
+      deployChaincode(admin);
     });
+
+
 }
 
 function deployChaincode(user) {

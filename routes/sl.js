@@ -21,12 +21,14 @@ router.get('/query', function(req, res) {
   var chain = req.app.get('chain');
   var user = req.app.get('loginUser');
   var chaincodeID = req.query.chaincodeID;
+  var functionName = req.query.functionName;
 
   console.log("chaincodeID: " + chaincodeID);
   if (! user) return res.status(500).json('No login user');
   if (! chaincodeID) return res.status(500).json('No chaincode ID');
+  if (! functionName) return res.status(500).json('No function name');
 
-  queryUser(user, chaincodeID)
+  queryUser(user, chaincodeID, functionName)
     .then(function(data) {
       return res.json(data);
     })
@@ -36,7 +38,7 @@ router.get('/query', function(req, res) {
     });
 });
 
-router.post('/invoke', function(req, res) {
+router.post('/invoke/trade', function(req, res) {
   var user = req.app.get('loginUser');
   var brInd = req.body.brInd;
   var borrower = req.body.borrower;
@@ -187,7 +189,7 @@ function calcMarginCall(user, chaincodeID) {
   });
 }
 
-function queryUser(user, chaincodeID) {
+function queryUser(user, chaincodeID, functionName) {
   return new Promise(function (resolve, reject) {
     var args = [];
     // Construct the query request
@@ -195,7 +197,7 @@ function queryUser(user, chaincodeID) {
         // Name (hash) required for query
         chaincodeID: chaincodeID,
         // Function to trigger
-        fcn: 'getOutstandings',
+        fcn: functionName,
         // Existing state variable to retrieve
         args: args
     };

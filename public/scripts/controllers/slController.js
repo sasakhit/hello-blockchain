@@ -4,9 +4,9 @@ myApp.controller('slController',
 
     var user;
 
-    $scope.chaincodeID = '40fe432488edd23182f5882a71a1a627406cf1aa4b8e5cca20d210a3edeb6226';
+    $scope.chaincodeID = 'c42cb8b7f587b7881ef427cee5b2ec303b7fdbeb0d642c9f99df9b4acb45fb0d';
     $scope.username = 'user_type1_0';
-    $scope.password = '53a2377961';
+    $scope.password = '4e59f90521';
     $scope.brInd = 'B';
     $scope.borrower = '0876111111';
     $scope.lender = '0876222222';
@@ -29,9 +29,9 @@ myApp.controller('slController',
       });
     }
 
-    $scope.query = function() {
-      $scope.comment = 'Querying ...';
-      DataService.querySl($scope.chaincodeID)
+    $scope.getOutstandings = function() {
+      $scope.comment = 'Getting outstandings ...';
+      DataService.querySl($scope.chaincodeID, 'getOutstandings')
         .then(function(data) {
           $scope.outstandings = data;
           $scope.comment = '';
@@ -41,9 +41,21 @@ myApp.controller('slController',
         });
     }
 
-    $scope.invoke = function(brInd,borrower,lender,secCode,qty,ccy,amt) {
+    $scope.getTransactions = function() {
+      $scope.comment = 'Getting transactions ...';
+      DataService.querySl($scope.chaincodeID, 'getTransactions')
+        .then(function(data) {
+          $scope.transactions = data;
+          $scope.comment = '';
+        })
+        .catch(function(error) {
+          $scope.comment = error;
+        });
+    }
+
+    $scope.tradeSl = function(brInd,borrower,lender,secCode,qty,ccy,amt) {
       $scope.comment = 'Invoking ...';
-      DataService.invokeSl(brInd,borrower,lender,secCode,qty,ccy,amt, $scope.chaincodeID)
+      DataService.invokeSlTrade(brInd,borrower,lender,secCode,qty,ccy,amt, $scope.chaincodeID)
         .then(function(data) {
           $scope.comment = data;
         })
@@ -62,8 +74,5 @@ myApp.controller('slController',
           $scope.comment = error;
         });
     }
-
-
-
   }
 ]);

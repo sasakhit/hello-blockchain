@@ -15,7 +15,7 @@ myApp.factory('DataService',
         invokeFx : invokeFx,
         deploySl : deploySl,
         querySl : querySl,
-        invokeSl : invokeSl,
+        invokeSlTrade : invokeSlTrade,
         invokeSlMarginCall : invokeSlMarginCall
       };
 
@@ -89,8 +89,8 @@ myApp.factory('DataService',
         });
       }
 
-      function querySl(chaincodeID) {
-        return $http.get('/sl/query', {params: {chaincodeID: chaincodeID}})
+      function querySl(chaincodeID, functionName) {
+        return $http.get('/sl/query', {params: {chaincodeID: chaincodeID, functionName: functionName}})
           .then(function(response) {
             return response.data;
           })
@@ -99,8 +99,8 @@ myApp.factory('DataService',
           });
       }
 
-      function invokeSl(brInd, borrower, lender, secCode, qty, ccy, amt, chaincodeID) {
-        return $http.post('/sl/invoke', {brInd: brInd, borrower: borrower, lender: lender, secCode: secCode, qty: qty, ccy: ccy, amt: amt, chaincodeID: chaincodeID})
+      function invokeSlTrade(brInd, borrower, lender, secCode, qty, ccy, amt, chaincodeID) {
+        return $http.post('/sl/invoke/trade', {brInd: brInd, borrower: borrower, lender: lender, secCode: secCode, qty: qty, ccy: ccy, amt: amt, chaincodeID: chaincodeID})
           .then(function(response) {
             return response.data;
           })

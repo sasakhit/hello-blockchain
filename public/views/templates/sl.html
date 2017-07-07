@@ -15,7 +15,7 @@
       </div>
       <br>
 
-      <button class="btn btn-primary" ng-click="invoke(brInd, borrower, lender, secCode, qty, ccy, amt)">Trade SL</button>
+      <button class="btn btn-primary" ng-click="tradeSl(brInd, borrower, lender, secCode, qty, ccy, amt)">Trade SL</button>
       <br>
       <div class="form-inline">
         <input type="radio" ng-model="brInd" value="B">Borrow
@@ -34,10 +34,13 @@
       <br>
 
       <!-- button class="btn btn-danger" ng-click="deploy()">Deploy</button -->
-      <button class="btn btn-warning" ng-click="query()">Get Outstandings</button>
+      <button class="btn btn-warning" ng-click="getOutstandings()">Get Outstandings</button>
+      <button class="btn btn-warning" ng-click="getTransactions()">Get Transactions</button>
       <button class="btn btn-primary" ng-click="marginCall()">Margin Call</button>
       {{comment}}
+      <br><br>
 
+      <label>Outstandings</label>
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
@@ -45,6 +48,8 @@
             <th>Lender</th>
             <th>SecCode/Ccy</th>
             <th>Qty/Amt</th>
+            <th>Price/Rate</th>
+            <th>MTM</th>
           </tr>
         </thead>
         <tbody ng-repeat="outstanding in outstandings">
@@ -53,6 +58,34 @@
             <td>{{outstanding.lender}}</td>
             <td>{{outstanding.secCode}}</td>
             <td>{{outstanding.qty}}</td>
+            <td>{{outstanding.price}}</td>
+            <td>{{outstanding.mtm}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <label>Transactions</label>
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Borrower</th>
+            <th>Lender</th>
+            <th>SecCode</th>
+            <th>Qty</th>
+            <th>Ccy</th>
+            <th>Amt</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat="transaction in transactions">
+          <tr>
+            <td>{{transaction.brInd}}</td>
+            <td>{{transaction.borrower}}</td>
+            <td>{{transaction.lender}}</td>
+            <td>{{transaction.secCode}}</td>
+            <td>{{transaction.qty}}</td>
+            <td>{{transaction.ccy}}</td>
+            <td>{{transaction.amt}}</td>
           </tr>
         </tbody>
       </table>
